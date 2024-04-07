@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\FileUpload;
+use Filament\Support\Enums\FontWeight;
 use PHPUnit\Framework\Reorderable;
 
 class ListingResource extends Resource
@@ -42,6 +43,7 @@ class ListingResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('address')
                     ->required()
+                    ->columnSpanFull()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('sqft')
                     ->required()
@@ -61,16 +63,12 @@ class ListingResource extends Resource
                     ->default(0),
                 
                 Forms\Components\Checkbox::make('full_support_avaiable')
-                    ->required()
                     ->default(0),
                 Forms\Components\Checkbox::make('gyn_area_avaiable')
-                    ->required()
                     ->default(0),
                 Forms\Components\Checkbox::make('mini_cafe_avaiable')
-                    ->required()
                     ->default(0),
                 Forms\Components\Checkbox::make('cinema_avaiable')
-                    ->required()
                     ->default(0),
                 FileUpload::make('attachments')
                     ->directory('listings')
@@ -88,6 +86,7 @@ class ListingResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
+                    ->weight(FontWeight::Bold)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
@@ -104,18 +103,8 @@ class ListingResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price_per_day')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('full_support_avaiable')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('gyn_area_avaiable')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('mini_cafe_avaiable')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('cinema_avaiable')
-                    ->numeric()
+                    ->money('IDR')
+                    ->weight(FontWeight::Bold)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -125,16 +114,15 @@ class ListingResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

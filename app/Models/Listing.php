@@ -28,7 +28,7 @@ class Listing extends Model
     ];
 
     // ketika dilempar ke json bisa menjadi array 
-    protected $cast = [
+    protected $casts = [
         'attachments' => 'array'
     ];
 
@@ -43,5 +43,10 @@ class Listing extends Model
     {
         $this->attributes['title'] = $value;
         $this->attributes['slug'] = Str::slug($value);
+    }
+
+    public function transaction()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }
